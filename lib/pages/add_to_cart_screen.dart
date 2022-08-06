@@ -17,29 +17,19 @@ class AddCartScreen extends StatefulWidget {
 }
 
 class _AddCartScreenState extends State<AddCartScreen> {
-  CartBloc productBloc=CartBloc();
+  CartBloc? productBloc;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    productBloc.add(FetchCart());
+    productBloc=BlocProvider.of<CartBloc>(context);
+    productBloc!.add(FetchCart());
   }
   
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('My Cart')),
-      body: _buildListCart()
-    );
-  }
-
-   Widget _buildListCart() {
-    return Container(
-      margin: EdgeInsets.all(8.0),
-      child: BlocProvider<CartBloc>(
-        create: (_) => productBloc,
-        child: BlocListener<CartBloc, CartState>(
+    return BlocListener<CartBloc, CartState>(
           listener: (context, state) {
             if (state is CartError) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -65,13 +55,13 @@ class _AddCartScreenState extends State<AddCartScreen> {
               }
             },
           ),
-        ),
-      ),
-    );
+        );
   }
 
   Widget _buildCard(BuildContext context, List<CartModel> model) {
-    return ListView.builder(
+    return Scaffold(
+      appBar: AppBar(title: Text('My Cart')),
+      body: ListView.builder(
       itemCount: model.length,
       itemBuilder: (context, index) {
         return Container(
@@ -105,7 +95,7 @@ class _AddCartScreenState extends State<AddCartScreen> {
               ),
             ),
         );
-     });
+     }));
   }
 
   Widget _buildLoading() => Center(child: CircularProgressIndicator());

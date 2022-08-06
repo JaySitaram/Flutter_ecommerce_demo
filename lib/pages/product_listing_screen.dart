@@ -12,39 +12,18 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
-  final ProductBloc _newsBloc = ProductBloc();
+  ProductBloc? _newsBloc;
 
   @override
   void initState() {
-    _newsBloc.add(GetProductList());
+    _newsBloc=BlocProvider.of<ProductBloc>(context);
+    _newsBloc!.add(GetProductList());
     super.initState();
   }
 
   @override
-  void dispose() {
-    // TODO: implement dispose
-    _newsBloc.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Shopping Mall'),actions: [
-        IconButton(onPressed: (){
-          Navigator.of(context).pushNamed("add_cart");
-        }, icon: Icon(Icons.shopping_cart))
-      ]),
-      body: _buildListCovid(),
-    );
-  }
-
-  Widget _buildListCovid() {
-    return Container(
-      margin: EdgeInsets.all(8.0),
-      child: BlocProvider<ProductBloc>(
-        create: (_) => _newsBloc,
-        child: BlocListener<ProductBloc, ProductState>(
+    return BlocListener<ProductBloc, ProductState>(
           listener: (context, state) {
             if (state is ProductError) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -56,6 +35,7 @@ class _ProductPageState extends State<ProductPage> {
           },
           child: BlocBuilder<ProductBloc, ProductState>(
             builder: (context, state) {
+              print("$state");
               if (state is ProductInitial) {
                 return _buildLoading();
               } else if (state is ProductLoading) {
@@ -69,13 +49,17 @@ class _ProductPageState extends State<ProductPage> {
               }
             },
           ),
-        ),
-      ),
-    );
+        );
   }
 
   Widget _buildCard(BuildContext context, ProductModel model) {
-    return GridView.builder(
+    return Scaffold(
+      appBar: AppBar(title: Text('Shopping Mall'),actions: [
+        IconButton(onPressed: (){
+          Navigator.of(context).pushNamed("add_cart");
+        }, icon: Icon(Icons.shopping_cart))
+      ]),
+      body: GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
       itemCount: model.data!.length,
       itemBuilder: (context, index) {
@@ -100,7 +84,7 @@ class _ProductPageState extends State<ProductPage> {
                             Expanded(child: Text(model.data![index].title!,maxLines: 4,overflow: TextOverflow.ellipsis,)),
                             GestureDetector(
                               onTap: (){
-                                _newsBloc.add(AddProductList({
+                                _newsBloc!.add(AddProductList({
                                   'image':model.data![index].featuredImage,
                                   'product_name':model.data![index].title,
                                   'product_price':model.data![index].price.toString(),
@@ -117,7 +101,7 @@ class _ProductPageState extends State<ProductPage> {
               ),
             ),
         );
-     });
+     }));
   }
 
   Widget _buildLoading() => Center(child: CircularProgressIndicator());

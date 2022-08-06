@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_ecommerce_demo/bloc/cart_bloc/cart_bloc.dart';
 import 'package:flutter_ecommerce_demo/bloc/product_bloc/product_bloc.dart';
 import 'package:flutter_ecommerce_demo/pages/add_to_cart_screen.dart';
 import 'package:flutter_ecommerce_demo/pages/product_listing_screen.dart';
@@ -14,7 +15,18 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MultiBlocProvider(
+      providers: [
+       BlocProvider(
+        lazy: false,
+          create: (context) => ProductBloc(),
+        ),
+        BlocProvider(
+        lazy: false,
+          create: (context) => CartBloc(),
+        ),
+      ],
+      child: MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -23,7 +35,7 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: Routing().generateRoute,
       initialRoute: 'product_listing',
       // home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+    ));
   }
 }
 
