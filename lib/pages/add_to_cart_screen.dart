@@ -38,7 +38,7 @@ class _AddCartScreenState extends State<AddCartScreen> {
     return Container(
       margin: EdgeInsets.all(8.0),
       child: BlocProvider<CartBloc>(
-        create: (_) => CartBloc(),
+        create: (_) => productBloc,
         child: BlocListener<CartBloc, CartState>(
           listener: (context, state) {
             if (state is CartError) {
